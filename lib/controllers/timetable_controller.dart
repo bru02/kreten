@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:filcnaplo/api/providers/overrides_provider.dart';
 import 'package:filcnaplo/theme.dart';
 import 'package:filcnaplo_kreta_api/providers/homework_provider.dart';
 import 'package:filcnaplo_kreta_api/providers/timetable_provider.dart';
@@ -24,7 +25,7 @@ class TimetableController extends ChangeNotifier {
     _setWeek(Week.fromId(id));
   }
 
-  int getWeekId(Week week) => (week.start.difference(getSchoolYearStart()).inDays / DateTime.daysPerWeek).ceil();
+  static int getWeekId(Week week) => (week.start.difference(getSchoolYearStart()).inDays / DateTime.daysPerWeek).ceil();
 
   static DateTime getSchoolYearStart() {
     DateTime now = DateTime.now();
@@ -56,7 +57,7 @@ class TimetableController extends ChangeNotifier {
     days = null;
 
     // Don't start loading on init
-    if (!initial) notifyListeners(); 
+    if (!initial) notifyListeners();
 
     try {
       await _fetchWeek(week, context: context);
@@ -94,6 +95,7 @@ class TimetableController extends ChangeNotifier {
   Future<void> _fetchWeek(Week week, {required BuildContext context}) async {
     await Provider.of<TimetableProvider>(context, listen: false).fetch(week: week, db: false);
     await Provider.of<HomeworkProvider>(context, listen: false).fetch(from: week.start, db: false);
+    await Provider.of<OverridesProvider>(context, listen: false).fetchForWeek(getWeekId(week));
   }
 
   List<List<Lesson>> _sortDays(Week week, {required BuildContext context}) {
