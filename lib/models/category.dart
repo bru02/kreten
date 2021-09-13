@@ -1,8 +1,14 @@
 import 'grade.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'category.g.dart';
 
+@JsonSerializable()
 class Category {
+  @JsonKey(name: 'Uid')
   String id;
+  @JsonKey(name: 'Leiras')
   String description;
+  @JsonKey(name: 'Nev')
   String name;
 
   Category({
@@ -41,4 +47,6 @@ class Category {
         return GradeType.unknown;
     }
   }
+
+  Map<String, dynamic> toJson() => _$CategoryToJson(this);
 }

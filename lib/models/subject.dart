@@ -1,8 +1,14 @@
 import 'category.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'subject.g.dart';
 
+@JsonSerializable(explicitToJson: true)
 class Subject {
+  @JsonKey(name: 'Uid')
   String id;
+  @JsonKey(name: 'Kategoria')
   Category category;
+  @JsonKey(name: 'Nev')
   String name;
 
   Subject({
@@ -24,6 +30,8 @@ class Subject {
     if (other is! Subject) return false;
     return id == other.id;
   }
+
+  Map<String, dynamic> toJson() => _$SubjectToJson(this);
 
   @override
   int get hashCode => id.hashCode;

@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:filcnaplo/api/providers/overrides_provider.dart';
 import 'package:filcnaplo/theme.dart';
 import 'package:filcnaplo_kreta_api/providers/homework_provider.dart';
 import 'package:filcnaplo_kreta_api/providers/timetable_provider.dart';
@@ -97,7 +96,6 @@ class TimetableController extends ChangeNotifier {
   Future<void> _fetchWeek(Week week, {required BuildContext context}) async {
     await Provider.of<TimetableProvider>(context, listen: false).fetch(week: week, db: false);
     await Provider.of<HomeworkProvider>(context, listen: false).fetch(from: week.start, db: false);
-    await Provider.of<OverridesProvider>(context, listen: false).fetchForWeek(getWeekId(week));
   }
 
   List<List<Lesson>> _sortDays(Week week, {required BuildContext context}) {
