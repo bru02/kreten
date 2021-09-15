@@ -8,6 +8,7 @@ import 'package:filcnaplo_mobile_ui/common/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:filcnaplo_mobile_ui/pages/timetable/timetable_page.i18n.dart';
 
 class TimetableController extends ChangeNotifier {
   late Week currentWeek;
@@ -52,24 +53,28 @@ class TimetableController extends ChangeNotifier {
     _setWeek(Week.fromId(id));
   }
 
-  Future<void> jump(Week week, {required BuildContext context, bool initial = false}) async {
+  Future<void> jump(Week week, {required BuildContext context, bool initial = false, bool loader = true}) async {
     if (_setWeek(week)) return;
 
-    days = null;
+    if (loader) {
+      days = null;
 
-    // Don't start loading on init
-    if (!initial) notifyListeners();
+      // Don't start loading on init
+      if (!initial) notifyListeners();
+    }
 
     try {
       await _fetchWeek(week, context: context);
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(
         context: context,
-        content: Text("Failed to get week!"),
+        content: Text("error".i18n),
         backgroundColor: AppColors.of(context).red,
       ));
 
       days = [];
+
+      print("ERROR: TimetableController.jump: $error");
     }
 
     days = _sortDays(week, context: context);
