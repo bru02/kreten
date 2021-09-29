@@ -12,11 +12,12 @@ import 'package:filcnaplo_mobile_ui/pages/timetable/timetable_page.i18n.dart';
 
 class TimetableController extends ChangeNotifier {
   late Week currentWeek;
-  late int currentWeekId;
+  int currentWeekId = -1;
+  late int previousWeekId;
   List<List<Lesson>>? days;
 
-  TimetableController({required BuildContext context}) {
-    current(context);
+  TimetableController() {
+    current();
   }
 
   static int getWeekId(Week week) => (week.start.difference(getSchoolYearStart()).inDays / DateTime.daysPerWeek).ceil();
@@ -43,7 +44,7 @@ class TimetableController extends ChangeNotifier {
   // Jump shortcuts
   Future<void> next(BuildContext context) => jump(Week.fromId(currentWeekId + 1), context: context);
   Future<void> previous(BuildContext context) => jump(Week.fromId(currentWeekId - 1), context: context);
-  void current(BuildContext context) {
+  void current() {
     Week week = Week.current();
     int id = getWeekId(week);
 
@@ -80,7 +81,7 @@ class TimetableController extends ChangeNotifier {
     days = _sortDays(week, context: context);
 
     // Jump to next week on weekends
-    if (initial && (days?.length ?? 0) > 0 && days!.last.first.date.weekday < DateTime.now().weekday) return next(context);
+    if (initial && (days?.length ?? 0) > 0 && days!.last.last.end.isBefore(DateTime.now())) return next(context);
 
     notifyListeners();
   }
@@ -94,6 +95,7 @@ class TimetableController extends ChangeNotifier {
     if (!_differentDate(week.start, Week.fromId(0).start)) week.start = TimetableController.getSchoolYearStart();
 
     currentWeek = week;
+    previousWeekId = currentWeekId;
     currentWeekId = id;
     return false;
   }
